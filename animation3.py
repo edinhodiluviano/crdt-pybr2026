@@ -1,4 +1,4 @@
-"""Animation 3: the automatic version of animation 2, with five phones.
+"""Animation 3: the automatic version of animation 2, with four phones.
 
 Every second each phone:
 
@@ -23,7 +23,7 @@ import py5
 
 from scene import HEIGHT, WIDTH, Scene, draw_frame
 
-PHONE_IDS = ["Usuária-A", "Usuária-B", "Usuária-C", "Usuária-D", "Usuária-E"]
+PHONE_IDS = ["Usuária-A", "Usuária-B", "Usuária-C", "Usuária-D"]
 LIKE_PROBABILITY = 0.5
 MESSAGE_PROBABILITY = 0.25
 TICK_SECONDS = 1.0
@@ -39,12 +39,12 @@ def settings() -> None:
 
 def setup() -> None:
     global scene
-    py5.window_title("CRDT: G-Counter likes, five phones")
+    py5.window_title("CRDT: G-Counter likes, four phones")
     py5.frame_rate(60)
     scene = Scene(
         PHONE_IDS,
         random.Random(SEED),
-        title="G-Counter likes, five phones",
+        title="G-Counter likes, four phones",
         subtitle=(
             f"every second, each phone likes someone with p = {LIKE_PROBABILITY:.0%} and "
             f"sends its state to each other phone with p = {MESSAGE_PROBABILITY:.0%}. "
