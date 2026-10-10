@@ -41,8 +41,6 @@ HEART = (229, 57, 70)
 MERGE = (40, 160, 70)
 AMBER = (205, 125, 0)
 
-PHONE_HEIGHT = 200
-PHONE_WIDTH = PHONE_HEIGHT * 0.55
 TEXT_SIZE = 22
 LINE_HEIGHT = 30
 NUMBER_COLUMN = 44
@@ -82,11 +80,16 @@ class Pulse:
     born: float
 
 
+def phone_height(n: int) -> float:
+    """Two phones get big icons at the sides; a fuller ring gets smaller ones."""
+    return 200 if n <= 2 else 150
+
+
 def layout(phone_ids: list[str]) -> dict[str, Spot]:
     """Phones equally spaced on a circle, the first one on the left."""
     n = len(phone_ids)
-    cx, cy = WIDTH / 2, HEIGHT / 2 + 20
-    radius = 330 if n <= 2 else 250
+    cx, cy = WIDTH / 2, HEIGHT / 2 + 10
+    radius = 330 if n <= 2 else 210
     spots = {}
     for i, pid in enumerate(phone_ids):
         angle = math.pi + 2 * math.pi * i / n
@@ -113,6 +116,8 @@ class Scene:
             rng=rng,
         )
         self.spots = layout(phone_ids)
+        self.phone_h = phone_height(len(phone_ids))
+        self.phone_w = self.phone_h * 0.55
         self.next_tick = TICK_SECONDS
         self.hearts: list[HeartPop] = []
         self.flashes: dict[tuple[str, str], Flash] = {}
@@ -150,7 +155,7 @@ class Scene:
 
     def anchor_x(self, phone: str) -> float:
         spot = self.spots[phone]
-        return spot.x + spot.side * (PHONE_WIDTH / 2 + 26)
+        return spot.x + spot.side * (self.phone_w / 2 + 26)
 
     def line_y(self, phone: str, key: str) -> float:
         ids = self.sim.phone_ids
@@ -169,7 +174,8 @@ class Scene:
         dist = math.hypot(dx, dy) or 1.0
         ux, uy = dx / dist, dy / dist
         nx, ny = -uy, ux  # right-hand normal: separates the two directions
-        sx, sy = s.x + ux * (PHONE_WIDTH / 2 + 12), s.y + uy * (PHONE_WIDTH / 2 + 12)
+        edge = self.phone_w / 2 + 12
+        sx, sy = s.x + ux * edge, s.y + uy * edge
         t = message.progress(now)
         t = t * t * (3 - 2 * t)  # ease in and out
         return sx + (r.x - sx) * t + nx * LANE_OFFSET, sy + (r.y - sy) * t + ny * LANE_OFFSET
@@ -186,9 +192,10 @@ def draw_frame(scene: Scene, now: float) -> None:
     for message in scene.sim.in_flight:
         draw_envelope(*scene.envelope_position(message, now))
     for pid, spot in scene.spots.items():
-        draw_phone(spot.x, spot.y, PHONE_HEIGHT, pid)
+        draw_phone(spot.x, spot.y, scene.phone_h, pid)
     for pulse in scene.pulses:
-        draw_pulse(scene.spots[pulse.phone], pulse.colour, (now - pulse.born) / PULSE_SECONDS)
+        spot = scene.spots[pulse.phone]
+        draw_pulse(spot, scene.phone_h, pulse.colour, (now - pulse.born) / PULSE_SECONDS)
     for heart in scene.hearts:
         draw_heart_pop(heart, (now - heart.born) / HEART_SECONDS)
     draw_footer(scene, now)
@@ -288,7 +295,7 @@ def draw_envelope(x: float, y: float) -> None:
     py5.pop_style()
 
 
-def draw_pulse(spot: Spot, colour: tuple[int, int, int], t: float) -> None:
+def draw_pulse(spot: Spot, h: float, colour: tuple[int, int, int], t: float) -> None:
     """An expanding, fading ring around a phone that just merged a message."""
     grow = 12 + 40 * t
     py5.push_style()
@@ -296,7 +303,7 @@ def draw_pulse(spot: Spot, colour: tuple[int, int, int], t: float) -> None:
     py5.no_fill()
     py5.stroke(*colour, 220 * (1 - t))
     py5.stroke_weight(4)
-    py5.rect(spot.x, spot.y, PHONE_WIDTH + grow, PHONE_HEIGHT + grow, PHONE_HEIGHT * 0.1 + grow / 2)
+    py5.rect(spot.x, spot.y, h * 0.55 + grow, h + grow, h * 0.1 + grow / 2)
     py5.pop_style()
 
 
