@@ -115,3 +115,20 @@ def test_random_run_never_loses_likes_and_converges_after_a_final_exchange():
     assert all(isinstance(d, Delivery) for d in deliveries)
     assert sim.converged()
     assert sum(values(sim, "phone-a").values()) == likes
+
+
+def test_manual_like_and_send():
+    sim = Simulation(["phone-a", "phone-b"], like_probability=0.0, message_probability=0.0)
+    like = sim.like("phone-a", "phone-b", now=2.0)
+    assert like == Like("phone-a", "phone-b", 2.0)
+    assert values(sim, "phone-a") == {"phone-a": 0, "phone-b": 1}
+    assert values(sim, "phone-b") == {"phone-a": 0, "phone-b": 0}
+
+    message = sim.send("phone-a", "phone-b", now=2.5)
+    assert sim.in_flight == [message]
+    assert (message.sender, message.receiver) == ("phone-a", "phone-b")
+    assert (message.sent_at, message.arrives_at) == (2.5, 3.5)
+    assert message.state["phone-b"].value() == 1
+
+    assert sim.deliver(now=3.5)[0].changed == {"phone-b"}
+    assert sim.converged()

@@ -94,21 +94,26 @@ class Simulation:
         ``message_probability``. Returns the likes and messages in order.
         """
         events: list[Like | Message] = []
-        for phone in self.phones.values():
+        for phone_id in self.phone_ids:
             if self.rng.random() < self.like_probability:
-                target = self.rng.choice(self.phone_ids)
-                phone.like(target)
-                events.append(Like(phone.id, target, now))
+                events.append(self.like(phone_id, self.rng.choice(self.phone_ids), now))
             for other in self.phone_ids:
-                if other == phone.id:
-                    continue
-                if self.rng.random() < self.message_probability:
-                    message = Message(
-                        phone.id, other, phone.snapshot(), now, now + self.flight_time
-                    )
-                    self.in_flight.append(message)
-                    events.append(message)
+                if other != phone_id and self.rng.random() < self.message_probability:
+                    events.append(self.send(phone_id, other, now))
         return events
+
+    def like(self, phone: str, target: str, now: float) -> Like:
+        """``phone`` likes ``target``: its own slot in target's counter grows."""
+        self.phones[phone].like(target)
+        return Like(phone, target, now)
+
+    def send(self, sender: str, receiver: str, now: float) -> Message:
+        """Put a snapshot of ``sender``'s state in flight towards ``receiver``."""
+        message = Message(
+            sender, receiver, self.phones[sender].snapshot(), now, now + self.flight_time
+        )
+        self.in_flight.append(message)
+        return message
 
     def deliver(self, now: float) -> list[Delivery]:
         """Hand every message that has arrived by ``now`` to its receiver."""
