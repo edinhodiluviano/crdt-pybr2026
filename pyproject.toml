@@ -1,0 +1,14 @@
+[project]
+name = "crdt"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Edinho", email = "git@final04.com" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "jupyter>=1.1.1",
+    "py5>=0.10.11a0",
+    "pytest>=9.1.1",
+]
