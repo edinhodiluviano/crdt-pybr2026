@@ -325,7 +325,7 @@ def draw_phone(x: float, y: float, h: float, label: str, hovered: bool = False) 
     py5.rect(x, y - h / 2 + h * 0.11, w * 0.32, h * 0.04, h * 0.02)  # speaker
     py5.circle(x, y + h / 2 - h * 0.13, h * 0.085)  # home button
     py5.fill(*MUTED)
-    py5.text_size(16)
+    py5.text_size(h * 0.08)  # 16 px on a 200 px phone
     py5.text_align(py5.CENTER, py5.CENTER)
     py5.text(label, x, y - h / 2 + h * 0.27)
     py5.pop_style()
