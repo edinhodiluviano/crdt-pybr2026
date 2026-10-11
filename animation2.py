@@ -39,17 +39,12 @@ def settings() -> None:
 
 def setup() -> None:
     global scene
-    py5.window_title("CRDT: G-Counter likes")
+    py5.window_title("CAPstagram")
     py5.frame_rate(60)
     scene = Scene(
         PHONE_IDS,
         random.Random(SEED),
-        title="G-Counter likes",
-        subtitle=(
-            f"every second, each phone likes someone with p = {LIKE_PROBABILITY:.0%} and "
-            f"sends its state to each other phone with p = {MESSAGE_PROBABILITY:.0%}. "
-            "A merge keeps the maximum per replica."
-        ),
+        title="CAPstagram",
         like_probability=LIKE_PROBABILITY,
         message_probability=MESSAGE_PROBABILITY,
         tick_seconds=TICK_SECONDS,

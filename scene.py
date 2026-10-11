@@ -104,14 +104,12 @@ class Scene:
         rng: random.Random,
         *,
         title: str,
-        subtitle: str,
         like_probability: float = 0.0,
         message_probability: float = 0.0,
         tick_seconds: float = 1.0,
         flight_seconds: float = 1.0,
     ) -> None:
         self.title = title
-        self.subtitle = subtitle
         self.sim = Simulation(
             phone_ids,
             like_probability=like_probability,
@@ -236,7 +234,7 @@ class Scene:
 
 def draw_frame(scene: Scene, now: float) -> None:
     py5.background(*PAPER)
-    draw_header(scene.title, scene.subtitle)
+    draw_header(scene.title)
     for pid in scene.sim.phone_ids:
         draw_likes(scene, pid, now)
     for message in scene.sim.in_flight:
@@ -251,15 +249,12 @@ def draw_frame(scene: Scene, now: float) -> None:
     draw_footer(scene, now)
 
 
-def draw_header(title: str, subtitle: str) -> None:
+def draw_header(title: str) -> None:
     py5.push_style()
-    py5.text_align(py5.LEFT, py5.TOP)
+    py5.text_align(py5.CENTER, py5.TOP)
     py5.fill(*INK)
     py5.text_size(28)
-    py5.text(title, 40, 30)
-    py5.fill(*MUTED)
-    py5.text_size(17)
-    py5.text(subtitle, 40, 70)
+    py5.text(title, WIDTH / 2, 30)
     py5.pop_style()
 
 

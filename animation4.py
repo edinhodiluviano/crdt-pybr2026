@@ -34,17 +34,12 @@ def settings() -> None:
 
 def setup() -> None:
     global scene
-    py5.window_title("CRDT: G-Counter likes, then only messages")
+    py5.window_title("CAPstagram")
     py5.frame_rate(60)
     scene = Scene(
         PHONE_IDS,
         random.Random(SEED),
-        title="G-Counter likes, then only messages",
-        subtitle=(
-            f"for {LIKES_STOP_SECONDS:.0f} s each phone likes someone every second with "
-            f"p = {LIKE_PROBABILITY:.0%}. Messages to each other phone keep going with "
-            f"p = {MESSAGE_PROBABILITY:.0%} per second."
-        ),
+        title="CAPstagram",
         like_probability=LIKE_PROBABILITY,
         message_probability=MESSAGE_PROBABILITY,
         tick_seconds=TICK_SECONDS,

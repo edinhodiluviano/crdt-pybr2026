@@ -34,17 +34,12 @@ def settings() -> None:
 
 def setup() -> None:
     global scene
-    py5.window_title("CRDT: G-Counter likes, by hand")
+    py5.window_title("CAPstagram")
     py5.frame_rate(60)
-    others = "the other phone" if len(PHONE_IDS) == 2 else "every other phone"
     scene = Scene(
         PHONE_IDS,
         random.Random(),
-        title="G-Counter likes, by hand",
-        subtitle=(
-            "nothing happens on its own. Click a name beside a phone to like that user "
-            f"from that phone. Click a phone to send its state to {others}."
-        ),
+        title="CAPstagram",
         flight_seconds=FLIGHT_SECONDS,
     )
 
